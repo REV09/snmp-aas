@@ -70,17 +70,21 @@ def get_bulk_auto(target, oids, credentials, count_oid, start_from=0, port=161,
     return get_bulk(target, oids, credentials, count, start_from, port, engine, context)
 
 
+ip_address = '192.168.200.168'
+community = 'madrid'
+
+
 #Nombre del host
-host_name = get('192.168.200.210', ['.1.3.6.1.2.1.1.5.0'], hlapi.CommunityData('madrid'))
+host_name = get(ip_address, ['.1.3.6.1.2.1.1.5.0'], hlapi.CommunityData(community))
 print(f'Nombre del host: {host_name["1.3.6.1.2.1.1.5.0"]}')
 
 #Cantidad de ram del host
-ram_size = get('192.168.200.210', ['.1.3.6.1.2.1.25.2.2.0'], hlapi.CommunityData('madrid'))
-mb_ram = ram_size["1.3.6.1.2.1.25.2.2.0"] / 1024
+ram_size = get(ip_address, ['.1.3.6.1.2.1.25.2.2.0'], hlapi.CommunityData(community))
+mb_ram = int(ram_size["1.3.6.1.2.1.25.2.2.0"]) / 1024
 print(f'Cantidad de ram: {int(mb_ram)} MB')
 
 #Tiempo que lleva funcionando
-system_uptime = get('192.168.200.210', ['.1.3.6.1.2.1.25.1.1.0'], hlapi.CommunityData('madrid'))
+system_uptime = get(ip_address, ['.1.3.6.1.2.1.25.1.1.0'], hlapi.CommunityData(community))
 system_time_text = str(system_uptime['1.3.6.1.2.1.25.1.1.0']) #El tiempo llega en segundos
 system_time_seconds = int(system_time_text[0:-2])
 minutes = 0
@@ -99,18 +103,19 @@ print(f'Tiempo en funcionamiento: {hours} horas, {minutes} minutos y {system_tim
 
 
 # .1.3.6.1.2.1.1.4.0
-system_contact = get('192.168.200.210', ['.1.3.6.1.2.1.1.4.0'], hlapi.CommunityData('madrid'))
+system_contact = get(ip_address, ['.1.3.6.1.2.1.1.4.0'], hlapi.CommunityData(community))
 print(f'contacto del sistema: {system_contact["1.3.6.1.2.1.1.4.0"]}')
 
 
 # Porcentaje de uso del procesador
-processor_usage = get('192.168.200.210', ['.1.3.6.1.4.1.2021.10.1.3.1'], hlapi.CommunityData('madrid'))
+processor_usage = get(ip_address, ['.1.3.6.1.4.1.2021.10.1.3.1'], hlapi.CommunityData(community))
 print(f'Porcentaje de uso del procesador: {float(processor_usage["1.3.6.1.4.1.2021.10.1.3.1"]) + 1}%')
 
 
 # Memoria ram utilizada .1.3.6.1.4.1.2021.4.6.0
-ram_usage = get('192.168.200.210', ['.1.3.6.1.4.1.2021.4.6.0'], hlapi.CommunityData('madrid'))
+ram_usage = get(ip_address, ['.1.3.6.1.4.1.2021.4.6.0'], hlapi.CommunityData(community))
+ram_size = get(ip_address, ['.1.3.6.1.2.1.25.2.2.0'], hlapi.CommunityData(community))
 ram_in_use = int(int(ram_usage["1.3.6.1.4.1.2021.4.6.0"]) / 1024)
-ram_free = 957 - ram_in_use
+ram_free = int(ram_size['1.3.6.1.2.1.25.2.2.0']) - ram_in_use
 print(f'Cantidad de ram utilizada: {ram_in_use} MB')
-print(f'Cantidad de ram libre: {ram_free}')
+print(f'Cantidad de ram libre: {int(ram_free/1024)} MB')
